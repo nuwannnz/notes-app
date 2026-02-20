@@ -5,3 +5,7 @@ export type { Block, BlockType, BlockCreateInput, BlockUpdateInput } from './blo
 export { createBlockPK, createBlockSK } from './block'
 export type { Folder, FolderCreateInput, FolderUpdateInput } from './folder'
 export { createFolderPK, createFolderSK } from './folder'
+export type { Project, ProjectColor, ProjectCreateInput, ProjectUpdateInput } from './project'
+export { createProjectPK, createProjectSK } from './project'
+export type { Task, TaskCreateInput, TaskUpdateInput } from './task'
+export { createTaskPK, createTaskSK } from './task'

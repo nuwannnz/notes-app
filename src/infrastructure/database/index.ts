@@ -1,2 +1,2 @@
 export { db, NotesDatabase } from './dexie'
-export { noteRepository, folderRepository } from './repositories'
+export { noteRepository, folderRepository, projectRepository, taskRepository } from './repositories'

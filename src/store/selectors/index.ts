@@ -1,5 +1,5 @@
 import { useStore } from '../store'
-import type { Note, Folder } from '@/core/entities'
+import type { Note, Folder, Project, Task } from '@/core/entities'
 
 // Note selectors
 export const useSelectedNote = (): Note | undefined => {
@@ -66,4 +66,35 @@ export const useIsLoading = (): boolean => {
 
 export const useHasError = (): string | null => {
   return useStore(state => state.notesError || state.foldersError)
+}
+
+// Project selectors
+export const useSelectedProject = (): Project | undefined => {
+  return useStore(state => {
+    if (!state.selectedProjectId) return undefined
+    return state.projects.find(project => project.id === state.selectedProjectId)
+  })
+}
+
+export const useProjectTasks = (): Task[] => {
+  return useStore(state => state.tasks)
+}
+
+export const useProjectProgress = (): { completed: number; total: number; percentage: number } => {
+  return useStore(state => {
+    const total = state.tasks.length
+    const completed = state.tasks.filter(t => t.isCompleted).length
+    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100)
+    return { completed, total, percentage }
+  })
+}
+
+export const useProjectProgressById = (projectId: string): { completed: number; total: number; percentage: number } => {
+  return useStore(state => {
+    const tasks = state.tasks.filter(t => t.projectId === projectId)
+    const total = tasks.length
+    const completed = tasks.filter(t => t.isCompleted).length
+    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100)
+    return { completed, total, percentage }
+  })
 }

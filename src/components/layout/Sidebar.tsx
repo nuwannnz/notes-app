@@ -31,7 +31,8 @@ export function Sidebar() {
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (isSidebarResizing) {
-        setSidebarWidth(e.clientX)
+        // Offset by the activity bar width (48px)
+        setSidebarWidth(e.clientX - 48)
       }
     },
     [isSidebarResizing, setSidebarWidth]

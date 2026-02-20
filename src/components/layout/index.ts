@@ -1,4 +1,5 @@
 export { AppLayout } from './AppLayout'
+export { ActivityBar, type ActiveModule } from './ActivityBar'
 export { Sidebar } from './Sidebar'
 export { MainContent } from './MainContent'
 export { AppContextMenu } from './AppContextMenu'

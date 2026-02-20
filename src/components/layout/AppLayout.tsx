@@ -1,8 +1,10 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useStore } from '@/store'
 import { useKeyboardShortcuts } from '@/hooks'
+import { ActivityBar, type ActiveModule } from './ActivityBar'
 import { Sidebar } from './Sidebar'
 import { MainContent } from './MainContent'
+import { ProjectsView, ProjectDetail } from '@/components/projects'
 import { AppContextMenu } from './AppContextMenu'
 import { AppModals } from './AppModals'
 
@@ -13,7 +15,8 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const { loadNotes, loadFolders, initializeTheme } = useStore()
+  const { loadNotes, loadFolders, loadProjects, initializeTheme, selectedProjectId } = useStore()
+  const [activeModule, setActiveModule] = useState<ActiveModule>('notes')
 
   // Register global keyboard shortcuts
   useKeyboardShortcuts()
@@ -25,12 +28,20 @@ export function AppLayout({ children }: AppLayoutProps) {
     // Load data
     loadNotes(OWNER_ID)
     loadFolders(OWNER_ID)
-  }, [loadNotes, loadFolders, initializeTheme])
+    loadProjects(OWNER_ID)
+  }, [loadNotes, loadFolders, loadProjects, initializeTheme])
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
-      {children ?? <MainContent />}
+      <ActivityBar activeModule={activeModule} onModuleChange={setActiveModule} />
+      {activeModule === 'notes' ? (
+        <>
+          <Sidebar />
+          {children ?? <MainContent />}
+        </>
+      ) : (
+        selectedProjectId ? <ProjectDetail /> : <ProjectsView />
+      )}
       <AppContextMenu />
       <AppModals />
     </div>
