@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colors */
+    --color-primary: 12 143 255;
+    --color-primary-light: 124 196 255;
+    --color-accent-purple: 196 181 253;
+    --color-accent-rose: 253 164 175;
+    --color-accent-mint: 134 239 172;
+
+    /* Surfaces */
+    --color-background: 255 255 255;
+    --color-surface: 255 255 255;
+    --color-muted: 245 245 247;
+    --color-sidebar: 250 250 250;
+
+    /* Text */
+    --color-text: 23 23 23;
+    --color-text-muted: 115 115 115;
+
+    /* Borders */
+    --color-border: 229 229 229;
+    --color-border-focus: 124 196 255;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+    /* Sizing */
+    --sidebar-width: 280px;
+    --sidebar-min-width: 200px;
+    --sidebar-max-width: 400px;
+
+    /* Editor font size */
+    --editor-font-size: 16px;
+  }
+
+  .dark {
+    --color-background: 26 26 46;
+    --color-surface: 26 26 46;
+    --color-muted: 45 45 68;
+    --color-sidebar: 22 22 42;
+
+    --color-text: 245 245 245;
+    --color-text-muted: 163 163 163;
+
+    --color-border: 55 55 75;
+    --color-border-focus: 12 143 255;
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.2);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+  }
+
+  * {
+    @apply border-neutral-200 dark:border-neutral-700;
+  }
+
+  body {
+    @apply bg-white dark:bg-surface-dark text-neutral-900 dark:text-neutral-100;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-300 dark:bg-neutral-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-400 dark:bg-neutral-500;
+  }
+}
+
+@layer components {
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md font-medium transition-colors
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700;
+  }
+
+  .btn-secondary {
+    @apply btn bg-muted-light dark:bg-muted-dark hover:bg-neutral-200 dark:hover:bg-neutral-700;
+  }
+
+  .btn-ghost {
+    @apply btn hover:bg-neutral-100 dark:hover:bg-neutral-800;
+  }
+
+  .btn-sm {
+    @apply h-8 px-3 text-sm;
+  }
+
+  .btn-md {
+    @apply h-10 px-4 text-sm;
+  }
+
+  .btn-lg {
+    @apply h-12 px-6 text-base;
+  }
+
+  .btn-icon {
+    @apply h-8 w-8 p-0;
+  }
+
+  /* Input styles */
+  .input {
+    @apply flex h-10 w-full rounded-md border border-neutral-200 dark:border-neutral-700
+           bg-white dark:bg-neutral-800 px-3 py-2 text-sm
+           placeholder:text-neutral-400 dark:placeholder:text-neutral-500
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Card styles */
+  .card {
+    @apply rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-surface-dark;
+  }
+
+  /* Tree node styles */
+  .tree-node {
+    @apply flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer
+           hover:bg-neutral-100 dark:hover:bg-neutral-800
+           transition-colors duration-150;
+  }
+
+  .tree-node.active {
+    @apply bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300;
+  }
+
+  /* Editor styles */
+  .editor-content {
+    @apply prose prose-neutral dark:prose-invert max-w-none;
+    font-size: var(--editor-font-size);
+  }
+
+  .editor-content p.is-editor-empty:first-child::before {
+    @apply text-neutral-400 dark:text-neutral-500 float-left h-0 pointer-events-none;
+    content: attr(data-placeholder);
+  }
+}
+
+@layer utilities {
+  /* Custom utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Resize handle */
+  .resize-handle {
+    @apply absolute top-0 right-0 w-1 h-full cursor-col-resize
+           hover:bg-primary-500/50 active:bg-primary-500
+           transition-colors duration-150;
+  }
+}
