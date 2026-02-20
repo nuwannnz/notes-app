@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -33,21 +33,20 @@ export function Editor({ note }: EditorProps) {
     noteIdRef.current = note.id
   }, [note.id])
 
-  // Debounced save function
-  const saveContent = useCallback(
+  // Debounced save function - stored in a ref so there's only ever one instance
+  // (useCallback + debounce creates a new instance on each invalidation, orphaning the old timer)
+  const saveContent = useRef(
     debounce(async (content: string) => {
       setSaving(true)
       try {
-        // Parse content into blocks
         const blocks = parseContentToBlocks(noteIdRef.current, content)
         await updateNote(noteIdRef.current, { content, blocks })
         setLastSavedAt(Date.now())
       } finally {
         setSaving(false)
       }
-    }, AUTOSAVE_DELAY),
-    [updateNote, setSaving, setLastSavedAt]
-  )
+    }, AUTOSAVE_DELAY)
+  ).current
 
   const editor = useEditor({
     extensions: [
@@ -98,10 +97,11 @@ export function Editor({ note }: EditorProps) {
     },
     onUpdate: ({ editor }) => {
       const content = JSON.stringify(editor.getJSON())
-      if (content !== initialContentRef.current) {
-        setHasUnsavedChanges(true)
-        saveContent(content)
-      }
+      // Always call saveContent to reset/cancel the debounce timer.
+      // Skipping it when content === initialContentRef.current would orphan
+      // any pending timer from a previous change, causing a stale save to fire.
+      setHasUnsavedChanges(content !== initialContentRef.current)
+      saveContent(content)
     }
   })
 
