@@ -2,8 +2,10 @@ import { useEffect, useCallback, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
+import TaskList from '@tiptap/extension-task-list'
+import TaskItem from '@tiptap/extension-task-item'
 import { useStore } from '@/store'
-import { debounce } from '@/utils'
+import { debounce, parseContentToBlocks } from '@/utils'
 import { EditorToolbar } from './EditorToolbar'
 import type { Note } from '@/core/entities'
 
@@ -24,19 +26,27 @@ export function Editor({ note }: EditorProps) {
 
   const titleRef = useRef<HTMLInputElement>(null)
   const initialContentRef = useRef(note.content)
+  const noteIdRef = useRef(note.id)
+
+  // Update noteId ref when note changes
+  useEffect(() => {
+    noteIdRef.current = note.id
+  }, [note.id])
 
   // Debounced save function
   const saveContent = useCallback(
     debounce(async (content: string) => {
       setSaving(true)
       try {
-        await updateNote(note.id, { content })
+        // Parse content into blocks
+        const blocks = parseContentToBlocks(noteIdRef.current, content)
+        await updateNote(noteIdRef.current, { content, blocks })
         setLastSavedAt(Date.now())
       } finally {
         setSaving(false)
       }
     }, AUTOSAVE_DELAY),
-    [note.id, updateNote, setSaving, setLastSavedAt]
+    [updateNote, setSaving, setLastSavedAt]
   )
 
   const editor = useEditor({
@@ -52,6 +62,27 @@ export function Editor({ note }: EditorProps) {
         orderedList: {
           keepMarks: true,
           keepAttributes: false
+        },
+        codeBlock: {
+          HTMLAttributes: {
+            class: 'code-block'
+          }
+        },
+        code: {
+          HTMLAttributes: {
+            class: 'inline-code'
+          }
+        }
+      }),
+      TaskList.configure({
+        HTMLAttributes: {
+          class: 'task-list'
+        }
+      }),
+      TaskItem.configure({
+        nested: true,
+        HTMLAttributes: {
+          class: 'task-item'
         }
       }),
       Placeholder.configure({

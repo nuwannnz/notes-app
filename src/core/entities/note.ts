@@ -17,7 +17,7 @@ export type NoteCreateInput = Pick<Note, 'title'> & {
   content?: string
 }
 
-export type NoteUpdateInput = Partial<Pick<Note, 'title' | 'content' | 'folderId' | 'isPinned' | 'isArchived' | 'isTrashed'>>
+export type NoteUpdateInput = Partial<Pick<Note, 'title' | 'content' | 'blocks' | 'folderId' | 'isPinned' | 'isArchived' | 'isTrashed'>>
 
 export function createNotePK(ownerId: string): string {
   return `USER#${ownerId}`

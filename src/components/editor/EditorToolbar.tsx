@@ -6,6 +6,7 @@ import {
   Code,
   List,
   ListOrdered,
+  ListTodo,
   Quote,
   Minus,
   Heading1,
@@ -13,7 +14,8 @@ import {
   Heading3,
   Undo,
   Redo,
-  Save
+  Save,
+  FileCode
 } from 'lucide-react'
 import { IconButton } from '@/components/ui'
 import { useStore } from '@/store'
@@ -142,6 +144,22 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
           size="sm"
         >
           <ListOrdered className="h-4 w-4" />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().toggleTaskList().run()}
+          className={cn(editor.isActive('taskList') && 'bg-neutral-200 dark:bg-neutral-700')}
+          title="Task list (checkboxes)"
+          size="sm"
+        >
+          <ListTodo className="h-4 w-4" />
+        </IconButton>
+        <IconButton
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={cn(editor.isActive('codeBlock') && 'bg-neutral-200 dark:bg-neutral-700')}
+          title="Code block"
+          size="sm"
+        >
+          <FileCode className="h-4 w-4" />
         </IconButton>
         <IconButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}

@@ -21,7 +21,8 @@ export function Sidebar() {
     createFolder,
     themeMode,
     setThemeMode,
-    isDark
+    isDark,
+    openModal
   } = useStore()
 
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -133,7 +134,7 @@ export function Sidebar() {
           <IconButton onClick={toggleTheme} title={`Theme: ${themeMode}`} size="sm">
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </IconButton>
-          <IconButton title="Settings" size="sm">
+          <IconButton onClick={() => openModal('settings')} title="Settings" size="sm">
             <Settings className="h-4 w-4" />
           </IconButton>
         </div>

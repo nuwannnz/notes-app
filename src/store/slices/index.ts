@@ -10,5 +10,5 @@ export { createEditorSlice } from './editor.slice'
 export type { UISlice, ContextMenuState, ModalState } from './ui.slice'
 export { createUISlice } from './ui.slice'
 
-export type { ThemeSlice, ThemeMode, AccentColor, FontSize } from './theme.slice'
+export type { ThemeSlice, ThemeMode, AccentColor, FontSize, LineHeight } from './theme.slice'
 export { createThemeSlice } from './theme.slice'

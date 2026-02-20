@@ -38,7 +38,8 @@ export const createNotesSlice: StateCreator<NotesSlice, [], [], NotesSlice> = (s
   },
 
   selectNote: (noteId: string | null) => {
-    set({ selectedNoteId: noteId })
+    // Clear folder selection when selecting a note
+    set({ selectedNoteId: noteId, selectedFolderId: null } as Partial<NotesSlice>)
   },
 
   createNote: async (ownerId: string, input: NoteCreateInput) => {
