@@ -1,0 +1,27 @@
+{
+  "name": "@notes-app/backend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/lambda.ts --bundle --platform=node --target=node22 --outfile=dist/index.js --external:@aws-sdk/*",
+    "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@notes-app/shared-types": "*",
+    "@vendia/serverless-express": "^4.0.0",
+    "@aws-sdk/client-dynamodb": "^3",
+    "@aws-sdk/lib-dynamodb": "^3",
+    "aws-jwt-verify": "^4",
+    "express": "^4",
+    "uuid": "^9"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8",
+    "@types/express": "^4",
+    "@types/uuid": "^9",
+    "esbuild": "^0.20",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}

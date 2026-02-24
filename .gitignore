@@ -25,3 +25,9 @@ dist-ssr
 
 # PWA
 dev-dist
+
+.env*
+
+.nx
+
+cdk.out

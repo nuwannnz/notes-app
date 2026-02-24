@@ -1,0 +1,28 @@
+{
+  "name": "infrastructure",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run build",
+        "cwd": "infrastructure"
+      }
+    },
+    "synth": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run synth",
+        "cwd": "infrastructure"
+      },
+      "dependsOn": ["build"]
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run deploy",
+        "cwd": "infrastructure"
+      },
+      "dependsOn": ["build"]
+    }
+  }
+}
