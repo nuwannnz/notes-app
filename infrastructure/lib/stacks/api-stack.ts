@@ -21,6 +21,7 @@ export class ApiStack extends cdk.Stack {
       table: props.table,
       userPool: props.userPool,
       userPoolClient: props.userPoolClient,
+      stageName: props.envName,
     })
 
     this.apiUrl = api.apiUrl

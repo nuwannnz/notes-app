@@ -24,16 +24,6 @@ function getVerifier() {
 }
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-  // Production: API Gateway JWT authorizer already validated the token,
-  // extract sub from requestContext claims
-  const event = (req as any).apiGateway?.event
-  const sub = event?.requestContext?.authorizer?.jwt?.claims?.sub as string | undefined
-  if (sub) {
-    req.userId = sub
-    return next()
-  }
-
-  // Local dev: verify Bearer token manually
   const authHeader = req.headers.authorization
   if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'unauthorized' })

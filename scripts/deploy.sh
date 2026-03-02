@@ -24,7 +24,7 @@ fi
 
 ENV_CAP="${ENV^}"   # 'Dev' or 'Prod'
 STACK_PREFIX="NotesApp-${ENV_CAP}"
-AWS_REGION="${AWS_REGION:-us-east-1}"
+AWS_REGION="${AWS_REGION:-$(aws configure get region 2>/dev/null || echo 'us-east-1')}"
 
 echo "======================================"
 echo "  Notes App Deployment — $ENV"

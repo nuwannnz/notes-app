@@ -1,7 +1,5 @@
 import * as cdk from 'aws-cdk-lib'
-import * as apigwv2 from 'aws-cdk-lib/aws-apigatewayv2'
-import * as integrations from 'aws-cdk-lib/aws-apigatewayv2-integrations'
-import * as authorizers from 'aws-cdk-lib/aws-apigatewayv2-authorizers'
+import * as apigw from 'aws-cdk-lib/aws-apigateway'
 import * as cognito from 'aws-cdk-lib/aws-cognito'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
 import { Construct } from 'constructs'
@@ -11,45 +9,52 @@ export interface ApiConstructProps {
   table: dynamodb.Table
   userPool: cognito.UserPool
   userPoolClient: cognito.UserPoolClient
+  stageName: string
 }
 
 export class ApiConstruct extends Construct {
-  public readonly api: apigwv2.HttpApi
+  public readonly api: apigw.RestApi
   public readonly apiUrl: string
 
   constructor(scope: Construct, id: string, props: ApiConstructProps) {
     super(scope, id)
 
-    this.api = new apigwv2.HttpApi(this, 'HttpApi', {
-      apiName: 'NotesAppApi',
-      corsPreflight: {
+    const nodeLambda = new NodeLambda(this, 'BackendLambda', {
+      table: props.table,
+      environment: {
+        COGNITO_USER_POOL_ID: props.userPool.userPoolId,
+        COGNITO_CLIENT_ID: props.userPoolClient.userPoolClientId,
+      },
+    })
+    const integration = new apigw.LambdaIntegration(nodeLambda.fn)
+
+    this.api = new apigw.RestApi(this, 'RestApi', {
+      restApiName: 'NotesAppApi',
+      deployOptions: { stageName: props.stageName },
+      defaultCorsPreflightOptions: {
         allowHeaders: ['Content-Type', 'Authorization'],
-        allowMethods: [
-          apigwv2.CorsHttpMethod.GET,
-          apigwv2.CorsHttpMethod.POST,
-          apigwv2.CorsHttpMethod.PUT,
-          apigwv2.CorsHttpMethod.DELETE,
-          apigwv2.CorsHttpMethod.OPTIONS,
-        ],
-        allowOrigins: ['*'],
+        allowMethods: apigw.Cors.ALL_METHODS,
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
         maxAge: cdk.Duration.days(1),
       },
     })
 
-    const authorizer = new authorizers.HttpJwtAuthorizer(
-      'CognitoAuthorizer',
-      `https://cognito-idp.${cdk.Stack.of(this).region}.amazonaws.com/${props.userPool.userPoolId}`,
-      {
-        jwtAudience: [props.userPoolClient.userPoolClientId],
-      }
-    )
+    const authorizer = new apigw.CognitoUserPoolsAuthorizer(this, 'CognitoAuthorizer', {
+      cognitoUserPools: [props.userPool],
+    })
 
-    const nodeLambda = new NodeLambda(this, 'BackendLambda', { table: props.table })
-    const integration = new integrations.HttpLambdaIntegration('Integration', nodeLambda.fn)
+    const methodOptions: apigw.MethodOptions = {
+      authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO,
+    }
 
-    this.api.addRoutes({ path: '/{proxy+}', methods: [apigwv2.HttpMethod.ANY], integration, authorizer })
-    this.api.addRoutes({ path: '/', methods: [apigwv2.HttpMethod.ANY], integration, authorizer })
+    this.api.root.addMethod('ANY', integration, methodOptions)
+    this.api.root.addProxy({
+      defaultIntegration: integration,
+      defaultMethodOptions: methodOptions,
+      anyMethod: true,
+    })
 
-    this.apiUrl = this.api.apiEndpoint
+    this.apiUrl = `https://${this.api.restApiId}.execute-api.${cdk.Stack.of(this).region}.amazonaws.com/${this.api.deploymentStage.stageName}`
   }
 }

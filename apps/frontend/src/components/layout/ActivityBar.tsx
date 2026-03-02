@@ -1,5 +1,6 @@
-import { FileText, FolderKanban } from 'lucide-react'
+import { FileText, FolderKanban, LogOut } from 'lucide-react'
 import { cn } from '@/utils'
+import { useAuth } from '@/features/auth/AuthContext'
 
 export type ActiveModule = 'notes' | 'projects'
 
@@ -14,6 +15,8 @@ const modules = [
 ]
 
 export function ActivityBar({ activeModule, onModuleChange }: ActivityBarProps) {
+  const { signOut } = useAuth()
+
   return (
     <div className="flex flex-col items-center w-12 h-full bg-neutral-100 dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700">
       <div className="flex flex-col items-center gap-1 pt-2">
@@ -36,6 +39,14 @@ export function ActivityBar({ activeModule, onModuleChange }: ActivityBarProps) 
           </button>
         ))}
       </div>
+
+      <button
+        onClick={signOut}
+        title="Sign out"
+        className="mt-auto mb-2 flex items-center justify-center w-10 h-10 rounded-lg text-neutral-500 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors"
+      >
+        <LogOut className="h-5 w-5" />
+      </button>
     </div>
   )
 }
