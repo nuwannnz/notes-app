@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
-import { useStore } from '@/store'
-import type { FontSize, LineHeight } from '@/store'
-import { useAuth } from '@/features/auth/AuthContext'
-import { Modal, Button, Input } from '@/components/ui'
-import { cn } from '@/utils'
+import { useState, useEffect } from "react";
+import { useStore } from "@/store";
+import type { FontSize, LineHeight } from "@/store";
+import { useAuth } from "@/features/auth/AuthContext";
+import { Modal, Button, Input } from "@/components/ui";
+import { cn } from "@/utils";
 
 export function AppModals() {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const {
     modal,
     closeModal,
@@ -17,60 +17,62 @@ export function AppModals() {
     fontSize,
     setFontSize,
     lineHeight,
-    setLineHeight
-  } = useStore()
+    setLineHeight,
+  } = useStore();
 
-  const [folderName, setFolderName] = useState('')
+  const [folderName, setFolderName] = useState("");
 
   useEffect(() => {
-    if (modal.type === 'renameFolder' && modal.data?.folderId) {
-      const folder = folders.find(f => f.id === modal.data?.folderId)
+    if (modal.type === "renameFolder" && modal.data?.folderId) {
+      const folder = folders.find((f) => f.id === modal.data?.folderId);
       if (folder) {
-        setFolderName(folder.name)
+        setFolderName(folder.name);
       }
-    } else if (modal.type === 'createFolder') {
-      setFolderName('')
+    } else if (modal.type === "createFolder") {
+      setFolderName("");
     }
-  }, [modal, folders])
+  }, [modal, folders]);
 
   const handleCreateFolder = async () => {
     if (folderName.trim() && user) {
-      await createFolder(user.userId, { name: folderName.trim() })
-      setFolderName('')
-      closeModal()
+      await createFolder({ name: folderName.trim() });
+      setFolderName("");
+      closeModal();
     }
-  }
+  };
 
   const handleRenameFolder = async () => {
     if (folderName.trim() && modal.data?.folderId) {
-      await updateFolder(modal.data.folderId as string, { name: folderName.trim() })
-      setFolderName('')
-      closeModal()
+      await updateFolder(modal.data.folderId as string, {
+        name: folderName.trim(),
+      });
+      setFolderName("");
+      closeModal();
     }
-  }
+  };
 
   const handleDeleteConfirm = async () => {
-    if (modal.data?.type === 'folder' && modal.data?.id) {
-      await deleteFolder(modal.data.id as string)
-      closeModal()
+    if (modal.data?.type === "folder" && modal.data?.id) {
+      await deleteFolder(modal.data.id as string);
+      closeModal();
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      if (modal.type === 'createFolder') {
-        handleCreateFolder()
-      } else if (modal.type === 'renameFolder') {
-        handleRenameFolder()
+    if (e.key === "Enter") {
+      if (modal.type === "createFolder") {
+        handleCreateFolder();
+      } else if (modal.type === "renameFolder") {
+        handleRenameFolder();
       }
     }
-  }
+  };
 
   return (
     <>
       {/* Create Folder Modal */}
       <Modal
-        isOpen={modal.isOpen && modal.type === 'createFolder'}
+        isOpen={modal.isOpen && modal.type === "createFolder"}
         onClose={closeModal}
         title="Create Folder"
       >
@@ -78,7 +80,7 @@ export function AppModals() {
           <Input
             placeholder="Folder name"
             value={folderName}
-            onChange={e => setFolderName(e.target.value)}
+            onChange={(e) => setFolderName(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
           />
@@ -95,7 +97,7 @@ export function AppModals() {
 
       {/* Rename Folder Modal */}
       <Modal
-        isOpen={modal.isOpen && modal.type === 'renameFolder'}
+        isOpen={modal.isOpen && modal.type === "renameFolder"}
         onClose={closeModal}
         title="Rename Folder"
       >
@@ -103,7 +105,7 @@ export function AppModals() {
           <Input
             placeholder="Folder name"
             value={folderName}
-            onChange={e => setFolderName(e.target.value)}
+            onChange={(e) => setFolderName(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
           />
@@ -120,14 +122,15 @@ export function AppModals() {
 
       {/* Delete Confirmation Modal */}
       <Modal
-        isOpen={modal.isOpen && modal.type === 'deleteConfirm'}
+        isOpen={modal.isOpen && modal.type === "deleteConfirm"}
         onClose={closeModal}
         title="Delete Confirmation"
       >
         <div className="space-y-4">
           <p className="text-neutral-600 dark:text-neutral-400">
-            Are you sure you want to delete this {String(modal.data?.type ?? 'item')}? This action cannot be undone.
-            {modal.data?.type === 'folder' && (
+            Are you sure you want to delete this{" "}
+            {String(modal.data?.type ?? "item")}? This action cannot be undone.
+            {modal.data?.type === "folder" && (
               <span className="block mt-2 text-sm text-red-500">
                 All notes inside this folder will also be deleted.
               </span>
@@ -146,7 +149,7 @@ export function AppModals() {
 
       {/* Settings Modal */}
       <Modal
-        isOpen={modal.isOpen && modal.type === 'settings'}
+        isOpen={modal.isOpen && modal.type === "settings"}
         onClose={closeModal}
         title="Settings"
       >
@@ -155,15 +158,15 @@ export function AppModals() {
           <div>
             <label className="block text-sm font-medium mb-2">Font Size</label>
             <div className="flex gap-2">
-              {(['small', 'medium', 'large'] as FontSize[]).map((size) => (
+              {(["small", "medium", "large"] as FontSize[]).map((size) => (
                 <button
                   key={size}
                   onClick={() => setFontSize(size)}
                   className={cn(
-                    'flex-1 py-2 px-3 rounded-md text-sm capitalize transition-colors',
+                    "flex-1 py-2 px-3 rounded-md text-sm capitalize transition-colors",
                     fontSize === size
-                      ? 'bg-primary-500 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                      ? "bg-primary-500 text-white"
+                      : "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700",
                   )}
                 >
                   {size}
@@ -174,22 +177,26 @@ export function AppModals() {
 
           {/* Line Height */}
           <div>
-            <label className="block text-sm font-medium mb-2">Line Height</label>
+            <label className="block text-sm font-medium mb-2">
+              Line Height
+            </label>
             <div className="flex gap-2">
-              {(['compact', 'normal', 'relaxed'] as LineHeight[]).map((height) => (
-                <button
-                  key={height}
-                  onClick={() => setLineHeight(height)}
-                  className={cn(
-                    'flex-1 py-2 px-3 rounded-md text-sm capitalize transition-colors',
-                    lineHeight === height
-                      ? 'bg-primary-500 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                  )}
-                >
-                  {height}
-                </button>
-              ))}
+              {(["compact", "normal", "relaxed"] as LineHeight[]).map(
+                (height) => (
+                  <button
+                    key={height}
+                    onClick={() => setLineHeight(height)}
+                    className={cn(
+                      "flex-1 py-2 px-3 rounded-md text-sm capitalize transition-colors",
+                      lineHeight === height
+                        ? "bg-primary-500 text-white"
+                        : "bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700",
+                    )}
+                  >
+                    {height}
+                  </button>
+                ),
+              )}
             </div>
           </div>
 
@@ -199,5 +206,5 @@ export function AppModals() {
         </div>
       </Modal>
     </>
-  )
+  );
 }

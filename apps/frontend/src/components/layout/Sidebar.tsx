@@ -1,10 +1,18 @@
-import { useCallback, useRef, useEffect } from 'react'
-import { PanelLeftClose, PanelLeft, Plus, Search, Settings, Moon, Sun } from 'lucide-react'
-import { useStore } from '@/store'
-import { useAuth } from '@/features/auth/AuthContext'
-import { IconButton, Input } from '@/components/ui'
-import { TreeView } from '@/components/tree/TreeView'
-import { cn } from '@/utils'
+import { useCallback, useRef, useEffect } from "react";
+import {
+  PanelLeftClose,
+  PanelLeft,
+  Plus,
+  Search,
+  Settings,
+  Moon,
+  Sun,
+} from "lucide-react";
+import { useStore } from "@/store";
+import { useAuth } from "@/features/auth/AuthContext";
+import { IconButton, Input } from "@/components/ui";
+import { TreeView } from "@/components/tree/TreeView";
+import { cn } from "@/utils";
 
 export function Sidebar() {
   const {
@@ -21,59 +29,63 @@ export function Sidebar() {
     themeMode,
     setThemeMode,
     isDark,
-    openModal
-  } = useStore()
+    openModal,
+  } = useStore();
 
-  const { user } = useAuth()
-  const sidebarRef = useRef<HTMLDivElement>(null)
-  const resizeRef = useRef<HTMLDivElement>(null)
+  const { user } = useAuth();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
       if (isSidebarResizing) {
         // Offset by the activity bar width (48px)
-        setSidebarWidth(e.clientX - 48)
+        setSidebarWidth(e.clientX - 48);
       }
     },
-    [isSidebarResizing, setSidebarWidth]
-  )
+    [isSidebarResizing, setSidebarWidth],
+  );
 
   const handleMouseUp = useCallback(() => {
-    setSidebarResizing(false)
-  }, [setSidebarResizing])
+    setSidebarResizing(false);
+  }, [setSidebarResizing]);
 
   useEffect(() => {
     if (isSidebarResizing) {
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [isSidebarResizing, handleMouseMove, handleMouseUp])
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isSidebarResizing, handleMouseMove, handleMouseUp]);
 
   const handleResizeStart = () => {
-    setSidebarResizing(true)
-  }
+    setSidebarResizing(true);
+  };
 
   const handleCreateNote = async () => {
-    if (!user) return
-    await createNote(user.userId, { title: 'Untitled' })
-  }
+    if (!user) return;
+    await createNote({ title: "Untitled" });
+  };
 
   const handleCreateFolder = async () => {
-    if (!user) return
-    await createFolder(user.userId, { name: 'New Folder' })
-  }
+    if (!user) return;
+    await createFolder({ name: "New Folder" });
+  };
 
   const toggleTheme = () => {
-    const modes: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system']
-    const currentIndex = modes.indexOf(themeMode)
-    const nextIndex = (currentIndex + 1) % modes.length
-    setThemeMode(modes[nextIndex])
-  }
+    const modes: Array<"light" | "dark" | "system"> = [
+      "light",
+      "dark",
+      "system",
+    ];
+    const currentIndex = modes.indexOf(themeMode);
+    const nextIndex = (currentIndex + 1) % modes.length;
+    setThemeMode(modes[nextIndex]);
+  };
 
   if (isSidebarCollapsed) {
     return (
@@ -82,16 +94,16 @@ export function Sidebar() {
           <PanelLeft className="h-5 w-5" />
         </IconButton>
       </div>
-    )
+    );
   }
 
   return (
     <div
       ref={sidebarRef}
       className={cn(
-        'relative flex flex-col h-full bg-sidebar-light dark:bg-sidebar-dark',
-        'border-r border-neutral-200 dark:border-neutral-700',
-        isSidebarResizing && 'select-none'
+        "relative flex flex-col h-full bg-sidebar-light dark:bg-sidebar-dark",
+        "border-r border-neutral-200 dark:border-neutral-700",
+        isSidebarResizing && "select-none",
       )}
       style={{ width: sidebarWidth }}
     >
@@ -102,7 +114,11 @@ export function Sidebar() {
           <IconButton onClick={handleCreateNote} title="New note" size="sm">
             <Plus className="h-4 w-4" />
           </IconButton>
-          <IconButton onClick={toggleSidebar} title="Collapse sidebar" size="sm">
+          <IconButton
+            onClick={toggleSidebar}
+            title="Collapse sidebar"
+            size="sm"
+          >
             <PanelLeftClose className="h-4 w-4" />
           </IconButton>
         </div>
@@ -115,7 +131,7 @@ export function Sidebar() {
           <Input
             placeholder="Search notes..."
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="h-8 pl-8 text-sm"
           />
         </div>
@@ -134,10 +150,22 @@ export function Sidebar() {
           </IconButton>
         </div>
         <div className="flex items-center gap-1">
-          <IconButton onClick={toggleTheme} title={`Theme: ${themeMode}`} size="sm">
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <IconButton
+            onClick={toggleTheme}
+            title={`Theme: ${themeMode}`}
+            size="sm"
+          >
+            {isDark ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </IconButton>
-          <IconButton onClick={() => openModal('settings')} title="Settings" size="sm">
+          <IconButton
+            onClick={() => openModal("settings")}
+            title="Settings"
+            size="sm"
+          >
             <Settings className="h-4 w-4" />
           </IconButton>
         </div>
@@ -148,12 +176,12 @@ export function Sidebar() {
         ref={resizeRef}
         onMouseDown={handleResizeStart}
         className={cn(
-          'absolute top-0 right-0 w-1 h-full cursor-col-resize',
-          'hover:bg-primary-500/50 active:bg-primary-500',
-          'transition-colors duration-150',
-          isSidebarResizing && 'bg-primary-500'
+          "absolute top-0 right-0 w-1 h-full cursor-col-resize",
+          "hover:bg-primary-500/50 active:bg-primary-500",
+          "transition-colors duration-150",
+          isSidebarResizing && "bg-primary-500",
         )}
       />
     </div>
-  )
+  );
 }

@@ -1,20 +1,14 @@
-import { type ReactNode, useEffect } from 'react'
-import { AuthProvider } from '@/features/auth/AuthContext'
-import { configureAws } from '@/config/aws-config'
-import { syncEngine } from '@/services/sync/SyncEngine'
+import { type ReactNode } from "react";
+import { AuthProvider } from "@/features/auth/AuthContext";
+import { configureAws } from "@/config/aws-config";
 
 // Configure AWS Amplify once at module load time
-configureAws()
+configureAws();
 
 interface ProvidersProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function Providers({ children }: ProvidersProps) {
-  useEffect(() => {
-    syncEngine.start()
-    return () => syncEngine.stop()
-  }, [])
-
-  return <AuthProvider>{children}</AuthProvider>
+  return <AuthProvider>{children}</AuthProvider>;
 }
